@@ -569,6 +569,21 @@ func readAny(r reader) (interface{}, error) {
 	case typeCodeTimestamp:
 		return readTimestamp(r)
 
+	// described type
+	case 0x0:
+		// TODO: better handling, currently just discard descriptor
+		_, err := r.ReadByte()
+		if err != nil {
+			return nil, err
+		}
+		// read and discard descriptor
+		_, err = readAny(r)
+		if err != nil {
+			return nil, err
+		}
+		// return value
+		return readAny(r)
+
 	// not-implemented
 	case
 		typeCodeFloat,

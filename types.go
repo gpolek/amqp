@@ -1958,12 +1958,16 @@ func (s symbol) marshal(wr writer) error {
 
 	var err error
 	switch {
-	// List8
+	// Sym8
 	case l < 256:
 		_, err = wr.Write(append([]byte{byte(typeCodeSym8), byte(l)}, []byte(s)...))
 
-	// List32
+	// Sym32
 	case l < math.MaxUint32:
+		err = wr.WriteByte(uint8(typeCodeSym32))
+		if err != nil {
+			return err
+		}
 		err = binary.Write(wr, binary.BigEndian, uint32(l))
 		if err != nil {
 			return err
@@ -2068,4 +2072,42 @@ func (f *mapSymbolAny) unmarshal(r reader) error {
 	}
 	*f = m
 	return nil
+}
+
+func (f mapSymbolAny) marshal(wr writer) error {
+	buf := bufPool.Get().(*bytes.Buffer)
+	defer bufPool.Put(buf)
+	buf.Reset()
+
+	for k, v := range f {
+		err := writeMapElement(buf, k, v)
+		if err != nil {
+			return err
+		}
+	}
+
+	err := writeMapHeader(wr, uint8(len(f)*2), buf.Len())
+	if err != nil {
+		return err
+	}
+
+	_, err = buf.WriteTo(wr)
+	return err
+}
+
+type describedType struct {
+	descriptor interface{}
+	value      interface{}
+}
+
+func (t describedType) marshal(wr writer) error {
+	err := wr.WriteByte(0x0) // descriptor constructor
+	if err != nil {
+		return err
+	}
+	err = marshal(wr, t.descriptor)
+	if err != nil {
+		return err
+	}
+	return marshal(wr, t.value)
 }

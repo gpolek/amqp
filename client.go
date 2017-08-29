@@ -212,6 +212,7 @@ func (s *Session) NewReceiver(opts ...LinkOption) (*Receiver, error) {
 		Role:   roleReceiver,
 		Source: &source{
 			Address: l.sourceAddr,
+			Filter:  l.filters,
 		},
 	})
 
@@ -307,12 +308,14 @@ const (
 //
 // May be used for sending or receiving, currently only receive implemented.
 type link struct {
-	handle     uint32         // our handle
-	sourceAddr string         // address sent during attach
-	linkCredit uint32         // maximum number of messages allowed between flow updates
-	rx         chan frameBody // sessions sends frames for this link on this channel
-	session    *Session       // parent session
-	receiver   *Receiver      // allows link options to modify Receiver
+	handle     uint32                 // our handle
+	sourceAddr string                 // address sent during attach
+	linkCredit uint32                 // maximum number of messages allowed between flow updates
+	filters    map[symbol]interface{} // source filters sent during attach
+
+	rx       chan frameBody // sessions sends frames for this link on this channel
+	session  *Session       // parent session
+	receiver *Receiver      // allows link options to modify Receiver
 
 	creditUsed uint32 // currently used credits
 
@@ -435,6 +438,18 @@ func LinkBatching(enable bool) LinkOption {
 func LinkBatchMaxAge(d time.Duration) LinkOption {
 	return func(l *link) error {
 		l.receiver.batchMaxAge = d
+		return nil
+	}
+}
+
+// LinkSelectorFilter sets a selector filter (apache.org:selector-filter:string) on the link source.
+func LinkSelectorFilter(filter string) LinkOption {
+	const key = symbol("apache.org:selector-filter:string")
+	return func(l *link) error {
+		if l.filters == nil {
+			l.filters = make(map[symbol]interface{})
+		}
+		l.filters[key] = describedType{key, filter}
 		return nil
 	}
 }
