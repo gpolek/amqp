@@ -1,14 +1,16 @@
-# **pack.ag/amqp**
+# **github.com/gpolek/amqpp**
 
-[![Go Report Card](https://goreportcard.com/badge/pack.ag/amqp)](https://goreportcard.com/report/pack.ag/amqp)
+[![Go Report Card](https://goreportcard.com/badge/github.com/gpolek/amqp)](https://goreportcard.com/report/github.com/gpolek/amqp)
 [![Coverage Status](https://coveralls.io/repos/github/vcabbage/amqp/badge.svg?branch=master)](https://coveralls.io/github/vcabbage/amqp?branch=master)
 [![Build Status](https://travis-ci.org/vcabbage/amqp.svg?branch=master)](https://travis-ci.org/vcabbage/amqp)
 [![Build status](https://ci.appveyor.com/api/projects/status/to267eqa7nojpv56?svg=true)](https://ci.appveyor.com/project/vCabbage/amqp)
-[![GoDoc](https://godoc.org/pack.ag/amqp?status.svg)](http://godoc.org/pack.ag/amqp)
+[![GoDoc](https://godoc.org/github.com/gpolek/amqp?status.svg)](http://godoc.org/github.com/gpolek/amqp)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/vcabbage/amqp/master/LICENSE)
 
 
-pack.ag/amqp is an AMQP 1.0 client implementation for Go.
+github.com/gpolek/amqp is an AMQP 1.0 client implementation for Go.
+
+Forked from pack.ag/amqp
 
 AMQP 1.0 is not compatible with AMQP 0-9-1 or 0-10, which are
 the most common AMQP protocols in use today.
@@ -25,7 +27,7 @@ API is subject to change until 1.0.0. If you choose to use this library, please 
 ## Install
 
 ```
-go get -u pack.ag/amqp
+go get -u github.com/gpolek/amqp
 ```
 
 ## Example Usage
@@ -38,7 +40,7 @@ import (
 	"fmt"
 	"log"
 
-	"pack.ag/amqp"
+	"github.com/gpolek/amqp"
 )
 
 func main() {
